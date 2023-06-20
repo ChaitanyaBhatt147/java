@@ -13,7 +13,7 @@ public class recursion3 {
             printPermutation(newStr, permutation + currChar);
         }
     }
-    
+
     // count path from 0,0 to n,m
     public static int countPath(int i, int j, int n, int m) {
         if (i == n || j == m)
