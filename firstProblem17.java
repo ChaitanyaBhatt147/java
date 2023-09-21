@@ -1,55 +1,109 @@
-/*Given a pointer to the head node of a linked list, the task is to reverse the linked list. We need to reverse the list by changing the links between nodes.*/
+/*Converging Maze: Largest Sum Cycle
+You are given a maze with N cells. Each cell may have multiple entry points but not more than one exit (ie. entry/exit points are unidirectional doors like valves).
+The cells are named with an integer value from 0 to N-1.
+You have to find:
+The sum of the largest sum cycle in the maze. Return -1 if there are no cycles.
+1. Sum of a cycle is the sum of the node number of all nodes in that cycle.
+7
+8
+9
+10
+11
+INPUT FORMAT:
+1. The first line has the number of cells N.
+2. The second line has a list of N values of the edgel] array. edge[i] contains the cell number that can be reached from of cell 'i' in one step. edge[i] is -1 if the 'i'th cell doesn't have an exit.
+OUTPUT FORMAT:
+Custo
+Pass may
+The first line denotes the sum of the largest sum cycle.
+Sample Input and Output
+Input:
+23
+4 4 1 4 13 8 8 8 0 8 14 9 15 11 -1 10 15 22 22 22 22 22 27*/
+// Java code for the approach
+
 import java.util.*;
+
 public class firstProblem17 {
-    static Node head;
-    static class Node{
-        int data;
-        Node next;
-        Node(int d){
-            data=d;
-            next=null;
-        }
-    }
-    static void insert(int data){
-        Node temp=new Node(data);
-        if(head==null){
-            head=temp;
-        }
-        else{
-            Node ptr=head;
-            while(ptr.next!=null){
-                ptr=ptr.next;
+    // adjacency list
+    static List<List<Integer> > adj = new ArrayList<>();
+    // arrays for tracking visited nodes and their parent
+    // nodes
+    static int[] vis, par;
+    // temporary list for storing nodes in a cycle
+    static List<Integer> tmp = new ArrayList<>();
+
+    // DFS function to find cycles and their sum
+    static long dfs(int node, int p)
+    {
+        vis[node] = 1;
+        par[node] = p;
+        tmp.add(node);
+        for (int i : adj.get(node)) {
+            if (vis[i] == 0) {
+                long z = dfs(i, node);
+                if (z != -1) {
+                    return z;
+                }
             }
-            ptr.next=temp;
+            else if (vis[i] == 1) {
+                long sum = i;
+                while (node != i) {
+                    sum += node;
+                    node = par[node];
+                }
+                if (node == i) {
+                    return sum;
+                }
+                return -1;
+            }
         }
+        return -1;
     }
-    static void reverse(){
-        Node prev=null;
-        Node current=head;
-        Node next=null;
-        while(current!=null){
-            next=current.next;
-            current.next=prev;
-            prev=current;
-            current=next;
+
+    // Function to find largest sum cycle
+    static long largestSumCycle(int N, List<Integer> Edge)
+    {
+        long ans = -1;
+        vis = new int[N];
+        adj = new ArrayList<>(N);
+        par = new int[N];
+
+        // creating adjacency list
+        for (int i = 0; i < N; i++) {
+            adj.add(new ArrayList<>());
+            if (Edge.get(i) != -1) {
+                adj.get(i).add(Edge.get(i));
+            }
         }
-        head=prev;
+
+        // finding cycles and their sum using DFS
+        for (int i = 0; i < N; i++) {
+            if (vis[i] == 0) {
+                ans = Math.max(ans, dfs(i, -1));
+                for (int j : tmp) {
+                    vis[j] = 2;
+                }
+                tmp.clear();
+            }
+        }
+
+        return ans;
     }
-    static void print(){
-        Node ptr=head;
-        while(ptr!=null){
-            System.out.print(ptr.data+"->");
-            ptr=ptr.next;
+
+    // Driver Code
+    public static void main(String[] args)
+    {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        List<Integer> Edge = new ArrayList<>();
+        for(int i = 0 ; i < N; i++){
+            int temp = sc.nextInt();
+            Edge.add(temp);
         }
-        System.out.println("NULL");
-    }
-    public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
-        int n=sc.nextInt();
-        for(int i=1;i<=n;i++){
-            insert(sc.nextInt());
-        }
-        reverse();
-        print();
+
+        // Function Call
+        long ans = largestSumCycle(N, Edge);
+        System.out.println(ans);
     }
 }

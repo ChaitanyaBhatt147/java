@@ -10,4 +10,8 @@ public class Arrays {
         System.out.println(marks[1]);
         System.out.println(marks[2]);
     }
+
+    public static List<Integer> asList(int i, int j, int k, int l) {
+        return null;
+    }
 }
